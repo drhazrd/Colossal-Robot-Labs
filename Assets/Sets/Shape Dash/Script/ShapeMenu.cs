@@ -1,18 +1,40 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class ShapeMenu : MonoBehaviour
 {
-    // Start is called before the first frame update
+    public GameObject startMenu, creditsMenu, loseMenu, hudObject;
     void Start()
     {
-        
+        SetStart();
     }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
+    public void SetStart(){
+        startMenu.SetActive(true);
+        loseMenu.SetActive(false);
+        creditsMenu.SetActive(false);
+        hudObject.SetActive(false);
+    }
+    public void StartGame(){
+        Clear();
+        hudObject.SetActive(true);
+        GameManager.Instance.GameStart();
+    }
+    public void OpenCredits(){
+        startMenu.SetActive(false);
+        creditsMenu.SetActive(true);
+    }
+    public void Clear(){
+        startMenu.SetActive(false);
+        creditsMenu.SetActive(false);
+        loseMenu.SetActive(false);
+    }
+    public void Lose(){
+        loseMenu.SetActive(true);
+        hudObject.SetActive(false);
+    }
+    public void QuitGame(){
+        Application.Quit();
     }
 }

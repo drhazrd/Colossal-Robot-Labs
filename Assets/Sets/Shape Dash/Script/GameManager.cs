@@ -6,6 +6,7 @@ public class GameManager : MonoBehaviour
 {
     // Singleton pattern for easy access from other scripts
     public static GameManager Instance { get; private set; }
+    public TeleportManager teleportManager{ get; private set; }
 
     // Game state variables
     public int score = 0;
@@ -34,14 +35,16 @@ public class GameManager : MonoBehaviour
         {
             Destroy(gameObject);
         }
+        teleportManager = GetComponent<TeleportManager>();
     }
 
-    void Start()
+    public void GameStart()
     {
         // Initial setup for UI and spawning
         UpdateScoreText();
         UpdateEnemyCountText();
         UpdateKarmaText();
+        NewPlayer();
         StartCoroutine(SpawnEnemies());
     }
 
@@ -99,11 +102,12 @@ public class GameManager : MonoBehaviour
             Destroy(enemy);
         }
         // Reposition player
-        player.transform.position = Vector3.zero;
+        NewPlayer();
         // Update UI
         UpdateScoreText();
         UpdateEnemyCountText();
         UpdateKarmaText();
+        transform.GetComponent<ShapeMenu>().Clear();
     }
 
     private void UpdateScoreText()
@@ -112,6 +116,10 @@ public class GameManager : MonoBehaviour
         {
             scoreText.text = "Score: " + score;
         }
+    }
+    public void NewPlayer(){
+        player = Instantiate(playerPrefab, transform.position, transform.rotation) as GameObject;
+        player.transform.position = Vector3.zero;
     }
 
     private void UpdateEnemyCountText()

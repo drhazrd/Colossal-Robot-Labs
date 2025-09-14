@@ -27,6 +27,7 @@ public class Player : MonoBehaviour
     {
         rb = GetComponent<Rigidbody2D>();
         ColorSetup(playerColor);
+        teleportManager = GameManager.Instance.teleportManager;
     }
 
     void Update()
