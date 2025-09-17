@@ -31,15 +31,17 @@ public class ProjectileController : MonoBehaviour
         // GetComponent<SpriteRenderer>().color = GetColorFromEnum(color);
     }
 
-    private void OnCollisionEnter2D(Collision2D collision)
+    private void OnTriggerEnter2D(Collider2D collision)
     {
         EnemyController enemy = collision.transform.GetComponent<EnemyController>();
         if (enemy != null)
         {
             enemy.TakeDamage(damage, projectileColor);
             Destroy(gameObject);
-        }else Destroy(gameObject);
-
+        }
+        if(collision.tag == "Scenery"){
+            Destroy(gameObject);
+        }
 
     }
      public void ColorSetup(ShapeDashColor type){

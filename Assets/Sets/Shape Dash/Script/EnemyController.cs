@@ -85,4 +85,13 @@ public class EnemyController : MonoBehaviour
             break;
         }
     }
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        HealthController enemy = collision.transform.GetComponent<HealthController>();
+        int damage = 1;
+        if (enemy != null)
+        {
+            enemy.TakeDamage();
+        }
+    }
 }

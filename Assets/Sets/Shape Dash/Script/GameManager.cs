@@ -4,15 +4,13 @@ using System.Collections.Generic;
 
 public class GameManager : MonoBehaviour
 {
-    // Singleton pattern for easy access from other scripts
     public static GameManager Instance { get; private set; }
     public TeleportManager teleportManager{ get; private set; }
 
-    // Game state variables
     public int score = 0;
     public float karmaMeter = 0;
     public int enemyCount = 0;
-    private const float karmaResetRate = 2.5f; // How quickly karma resets to 0
+    private const float karmaResetRate = 2.5f; 
 
     [Header("Game Objects")]
     public GameObject player;
@@ -40,7 +38,6 @@ public class GameManager : MonoBehaviour
 
     public void GameStart()
     {
-        // Initial setup for UI and spawning
         UpdateScoreText();
         UpdateEnemyCountText();
         UpdateKarmaText();
@@ -50,7 +47,6 @@ public class GameManager : MonoBehaviour
 
     void Update()
     {
-        // Slowly move karma back towards 0
         karmaMeter = Mathf.Lerp(karmaMeter, 0, Time.deltaTime * karmaResetRate);
         UpdateKarmaText();
     }
@@ -79,14 +75,14 @@ public class GameManager : MonoBehaviour
     {
         while (true)
         {
-            if (enemyCount < 10) // Example limit for enemy count
+            if (enemyCount < 10) 
             {
                 int spawnIndex = Random.Range(0, spawnPoints.Length);
                 Instantiate(enemyPrefab, spawnPoints[spawnIndex].position, Quaternion.identity);
                 enemyCount++;
                 UpdateEnemyCountText();
             }
-            yield return new WaitForSeconds(2f); // Wait 2 seconds before checking again
+            yield return new WaitForSeconds(2f); 
         }
     }
 
