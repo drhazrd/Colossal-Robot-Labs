@@ -13,12 +13,16 @@ public class Player : MonoBehaviour
     public Transform firePoint, firePivot;
     public float fireRate = 0.5f;
     private float nextFireTime;
+    public AudioClip fireSFX;
+
 
     [Header("Teleportation")]
     public TeleportManager teleportManager;
     public float teleportCooldown = 1f;
     private float nextTeleportTime;
     public float teleportCost = 10f;
+    public AudioClip teleportSFX;
+
 
     [Header("Player State")]
     public ShapeDashColor playerColor;
@@ -81,7 +85,7 @@ public class Player : MonoBehaviour
             ProjectileController projectileScript = projectile.GetComponent<ProjectileController>();
             if (projectileScript != null)
             {
-                Debug.Log("Boom");
+                AudioManager.instance.PlaySFXClip(fireSFX);
                 projectileScript.SetColor(playerColor);
             }
         }
@@ -107,8 +111,9 @@ public class Player : MonoBehaviour
     {
         Vector2 newPosition = teleportManager.GetSafeTeleportPosition(transform.position);
         transform.position = newPosition;
+        AudioManager.instance.PlaySFXClip(teleportSFX);
         GameManager.Instance.ChangeKarma(-teleportCost); // karma cost
-        // vfx for teleport
+
         Debug.Log("Teleported to a new location!");
     }
     public void ColorSetup(ShapeDashColor type){
@@ -135,7 +140,7 @@ public class Player : MonoBehaviour
         }
     }
     void OnDestroy(){
-        if(GameManager.Instance != null) GameManager.Instance.ResetGame();
+        if(GameManager.Instance != null) GameManager.Instance.ResetGameScreen();
     }
 }
 

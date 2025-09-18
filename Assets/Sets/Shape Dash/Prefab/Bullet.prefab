@@ -163,3 +163,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   speed: 10
   damage: 20
+  sfxClip: {fileID: 8300000, guid: 9c86405eafe6f2b498a87ea1fd0b52c4, type: 3}

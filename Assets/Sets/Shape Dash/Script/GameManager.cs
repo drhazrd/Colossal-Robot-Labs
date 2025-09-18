@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 
 public class GameManager : MonoBehaviour
 {
@@ -19,9 +20,13 @@ public class GameManager : MonoBehaviour
     public Transform[] spawnPoints;
 
     [Header("UI References")]
-    public TMPro.TextMeshProUGUI scoreText;
-    public TMPro.TextMeshProUGUI enemyCountText;
-    public TMPro.TextMeshProUGUI karmaText;
+    public TextMeshProUGUI scoreText;
+    public TextMeshProUGUI enemyCountText;
+    public TextMeshProUGUI karmaText;
+
+    public ShapeMenu ui;
+    public float spawnDelay = 2f;
+    bool gameActive;
 
     private void Awake()
     {
@@ -38,10 +43,14 @@ public class GameManager : MonoBehaviour
 
     public void GameStart()
     {
+        ui = GetComponent<ShapeMenu>();
         UpdateScoreText();
         UpdateEnemyCountText();
         UpdateKarmaText();
         NewPlayer();
+        AudioManager.instance.PlayBGM();
+
+        gameActive = true;
         StartCoroutine(SpawnEnemies());
     }
 
@@ -60,7 +69,7 @@ public class GameManager : MonoBehaviour
 
     public void EnemyDied()
     {
-        enemyCount--;
+        enemyCount++;
         UpdateEnemyCountText();
     }
 
@@ -73,30 +82,34 @@ public class GameManager : MonoBehaviour
 
     private IEnumerator SpawnEnemies()
     {
-        while (true)
+        while (gameActive)
         {
-            if (enemyCount < 10) 
-            {
                 int spawnIndex = Random.Range(0, spawnPoints.Length);
                 Instantiate(enemyPrefab, spawnPoints[spawnIndex].position, Quaternion.identity);
-                enemyCount++;
                 UpdateEnemyCountText();
-            }
-            yield return new WaitForSeconds(2f); 
+                spawnDelay += 0.25f;
+            yield return new WaitForSeconds(spawnDelay); 
         }
     }
 
-    public void ResetGame()
-    {
-        score = 0;
-        karmaMeter = 0;
-        enemyCount = 0;
+    public void ResetGameScreen(){
+        ui.Lose();
+        PlayerPrefs.SetInt("playerScore", score);
+        PlayerPrefs.SetInt("killCount", enemyCount);
+        gameActive = false;
         // Find and destroy all enemies
         GameObject[] enemies = GameObject.FindGameObjectsWithTag("Enemy");
         foreach (var enemy in enemies)
         {
             Destroy(enemy);
         }
+        AudioManager.instance.StopBGM();
+    }
+    public void ResetGame()
+    {
+        score = 0;
+        karmaMeter = 0;
+        enemyCount = 0;
         // Reposition player
         NewPlayer();
         // Update UI
@@ -104,6 +117,18 @@ public class GameManager : MonoBehaviour
         UpdateEnemyCountText();
         UpdateKarmaText();
         transform.GetComponent<ShapeMenu>().Clear();
+        AudioManager.instance.PlayBGM();
+
+        gameActive = true;
+        StartCoroutine(SpawnEnemies());
+    }
+    public void LeaveGame()
+    {
+        score = 0;
+        karmaMeter = 0;
+        enemyCount = 0;
+        // Reposition player
+        transform.GetComponent<ShapeMenu>().SetStart();
     }
 
     private void UpdateScoreText()

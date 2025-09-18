@@ -8,6 +8,7 @@ public class ProjectileController : MonoBehaviour
     private ShapeDashColor projectileColor;
 
     private Rigidbody2D rb;
+    public AudioClip sfxClip;
 
     private void Awake()
     {
@@ -16,19 +17,14 @@ public class ProjectileController : MonoBehaviour
 
     void Start()
     {
-        // Apply forward velocity based on the rotation of the fire point
         rb.velocity = transform.up * speed;
     }
 
-    /// <summary>
-    /// Sets the projectile's color.
-    /// </summary>
+
     public void SetColor(ShapeDashColor color)
     {
         projectileColor = color;
         ColorSetup(projectileColor);
-        // You would change the SpriteRenderer color here
-        // GetComponent<SpriteRenderer>().color = GetColorFromEnum(color);
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
@@ -37,6 +33,8 @@ public class ProjectileController : MonoBehaviour
         if (enemy != null)
         {
             enemy.TakeDamage(damage, projectileColor);
+            if(sfxClip != null) AudioManager.instance.PlaySFXClip(sfxClip);
+
             Destroy(gameObject);
         }
         if(collision.tag == "Scenery"){

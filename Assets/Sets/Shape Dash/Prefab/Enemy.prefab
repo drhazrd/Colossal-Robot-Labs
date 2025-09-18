@@ -16,7 +16,7 @@ GameObject:
   - component: {fileID: 5267106972642546487}
   m_Layer: 6
   m_Name: Enemy
-  m_TagString: Player
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -177,6 +177,8 @@ MonoBehaviour:
   scoreValue: 10
   karmaChangeOnDeath: 5
   enemyColor: 0
+  hitSFX: {fileID: 8300000, guid: 9c86405eafe6f2b498a87ea1fd0b52c4, type: 3}
+  deathSFX: {fileID: 8300000, guid: f794b33c86dad5e48a097becfec64dba, type: 3}
 --- !u!114 &5267106972642546487
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -190,3 +192,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxHeart: 3
+  deathVFX: {fileID: 2612726919840013254, guid: 4c596e74ac22cf24d94747a7b96ebc33, type: 3}
+  deathSFX: {fileID: 8300000, guid: 9a4c0d91f2a6b2843937679341f13069, type: 3}

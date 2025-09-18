@@ -281,10 +281,12 @@ MonoBehaviour:
   graphicsTransform: {fileID: 8238065347893487979}
   firePoint: {fileID: 4749902269242738800}
   firePivot: {fileID: 118206238176773416}
-  fireRate: 0.5
+  fireRate: 0.17
+  fireSFX: {fileID: 8300000, guid: 7b120400fa64f7745b7837c5555c7541, type: 3}
   teleportManager: {fileID: 0}
   teleportCooldown: 1
   teleportCost: 1
+  teleportSFX: {fileID: 8300000, guid: d84b6e937185626448ff42f18ab31b9f, type: 3}
   playerColor: 0
 --- !u!58 &1893243714331219182
 CircleCollider2D:
@@ -334,3 +336,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxHeart: 3
+  deathVFX: {fileID: 2612726919840013254, guid: 4c596e74ac22cf24d94747a7b96ebc33, type: 3}
+  deathSFX: {fileID: 8300000, guid: efa3021d2366fab48aebbbe8b63b638d, type: 3}

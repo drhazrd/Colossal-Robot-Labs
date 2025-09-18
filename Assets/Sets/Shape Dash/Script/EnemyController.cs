@@ -9,13 +9,17 @@ public class EnemyController : MonoBehaviour
     public int scoreValue = 10;
     public float karmaChangeOnDeath = 5f;
     public ShapeDashColor enemyColor;
+    public AudioClip hitSFX;
+    public AudioClip deathSFX;
+
 
     private Transform playerTransform;
-
+    
     private void Start()
     {
         // Find the player object
-        playerTransform = GameManager.Instance.player.transform;
+        bool playerFound = GameManager.Instance.player.transform != null;
+        if(playerFound)playerTransform = GameManager.Instance.player.transform;
         ColorSetup(enemyColor);
     }
 
@@ -29,9 +33,7 @@ public class EnemyController : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// Applies damage to the enemy.
-    /// </summary>
+
     public void TakeDamage(float damage, ShapeDashColor projectileColor)
     {
         // Check for color match
@@ -43,6 +45,7 @@ public class EnemyController : MonoBehaviour
         }
 
         health -= damage;
+        if(hitSFX != null) AudioManager.instance.PlaySFXClip(hitSFX);
 
         if (health <= 0)
         {
@@ -50,9 +53,6 @@ public class EnemyController : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// Handles enemy death and updates the game state.
-    /// </summary>
     private void Die()
     {
         GameManager.Instance.AddScore(scoreValue);
@@ -88,7 +88,6 @@ public class EnemyController : MonoBehaviour
     private void OnCollisionEnter2D(Collision2D collision)
     {
         HealthController enemy = collision.transform.GetComponent<HealthController>();
-        int damage = 1;
         if (enemy != null)
         {
             enemy.TakeDamage();
