@@ -1,7 +1,16 @@
 using UnityEngine;
 public class AnimationFX:MonoBehaviour{
-    public void Interact(){
+    public bool isMoving = false;
 
+    public bool isGrounded;
+
+    public void Interact()
+    {
+
+    }
+    public void Jump()
+    { 
+        
     }
     public void Use(){
 

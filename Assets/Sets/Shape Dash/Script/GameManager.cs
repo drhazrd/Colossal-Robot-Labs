@@ -27,6 +27,7 @@ public class GameManager : MonoBehaviour
     public ShapeMenu ui;
     public float spawnDelay = 2f;
     bool gameActive;
+    public bool canMove;
 
     private void Awake()
     {
@@ -84,7 +85,7 @@ public class GameManager : MonoBehaviour
     {
         while (gameActive)
         {
-                int spawnIndex = Random.Range(0, spawnPoints.Length);
+                int spawnIndex = UnityEngine.Random.Range(0, spawnPoints.Length);
                 Instantiate(enemyPrefab, spawnPoints[spawnIndex].position, Quaternion.identity);
                 UpdateEnemyCountText();
                 spawnDelay += 0.25f;

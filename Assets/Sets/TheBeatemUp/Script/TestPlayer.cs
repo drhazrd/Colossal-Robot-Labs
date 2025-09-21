@@ -13,7 +13,7 @@ public class TestPlayer : MonoBehaviour
     [Range(0.01f, 12f)]
     public float speed = 6f;
     public float jumpPower = 6f;
-    Controls controls;
+    PlayerControls controls;
     PlayerInput pi;
     private Vector2 moveInput;
     private Vector2 aimInput;
@@ -36,9 +36,8 @@ public class TestPlayer : MonoBehaviour
     MeleeAttack melee;
 
     void Awake(){
-        controls = new Controls();
+        controls = new PlayerControls();
         pi = GetComponent<PlayerInput>();
-        AttackChecker();
     }
 
     void OnEnable(){
@@ -48,16 +47,17 @@ public class TestPlayer : MonoBehaviour
     void OnDisable(){
         controls.Disable();
     }
-    
+
     void Start()
     {
         controller = GetComponent<CharacterController>();
-        controls.Player.Jump.performed += _ => Jump();
-        controls.Player.Action.performed += _ => Action();
-        controls.Player.Interact.performed += _ => Interact();
-        controls.Player.Use.performed += _ => Use();
+        controls.Controls.Jump.performed += _ => Jump();
+        controls.Controls.Action.performed += _ => Action();
+        controls.Controls.Interact.performed += _ => Interact();
+        controls.Controls.Use.performed += _ => Use();
         animatorFX = GetComponentInChildren<AnimationFX>();
         _model = animatorFX.transform;
+        
     }
 
     private void Jump()
@@ -81,8 +81,8 @@ public class TestPlayer : MonoBehaviour
 
     private void HandleInput()
     {
-        moveInput = controls.Player.Move.ReadValue<Vector2>();
-        aimInput = controls.Player.Look.ReadValue<Vector2>();
+        moveInput = controls.Controls.Move.ReadValue<Vector2>();
+        aimInput = controls.Controls.Look.ReadValue<Vector2>();
 
     }
 
@@ -196,7 +196,7 @@ public class TestPlayer : MonoBehaviour
     {
         isGrounded = Grounded();
         if(animatorFX != null) animatorFX.isGrounded = isGrounded;
-        canMove = GameManager.gameManager.canMove;
+        canMove = GameManager.Instance ? GameManager.Instance.canMove: true;
         isAiming = aimInput.sqrMagnitude > 0 && canMove;
         isMoving = moveInput.sqrMagnitude > 0.0f && canMove;
     }
