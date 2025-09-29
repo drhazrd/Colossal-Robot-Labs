@@ -6,22 +6,28 @@ using UnityEngine.InputSystem;
 
 public class PlayerController : MonoBehaviour
 {
+    [Header("Health")]
+    [SerializeField] private float playerHealth;
+    [SerializeField] private float regenSpeed;
+
     [Header("Walk")]
-    [SerializeField] private CharacterController characterController;
     [SerializeField] private Transform playerBody;
     [SerializeField] private float playerSpeed = 6f;
     [SerializeField] private float playerTurnSpeed = 500f;
 
-
     [Header("Jump")]
-    [SerializeField] private float playerJumpSpeed = 8f;
+    [SerializeField] public float jumpHeight = 1f;
     private float gravity = -9.8f;
-    public float jumpHeight = 1f;
     private Vector3 velocity;
     private bool isGrounded;
 
+
     private PlayerActions playerActions;
     private PlayerActions.ControlsActions controls;
+
+    private CharacterController characterController;
+
+    private WeaponController weaponController;
 
 
     private Vector3 playerInput;
@@ -33,6 +39,8 @@ public class PlayerController : MonoBehaviour
         playerActions = new PlayerActions();
         characterController = GetComponent<CharacterController>();
         controls = playerActions.Controls;
+
+        weaponController = GetComponentInChildren<WeaponController>();
 
         controls.Attack.performed += _ => Attack();
         controls.Jump.performed += _ => Jump();
@@ -119,7 +127,7 @@ public class PlayerController : MonoBehaviour
     }
     private void Attack()
     {
-        throw new NotImplementedException();
+        weaponController.SwordSwing();
     }
     #endregion
 
