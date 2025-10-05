@@ -7,13 +7,18 @@ using UnityEngine.InputSystem;
 public class PlayerController : MonoBehaviour
 {
     [Header("Health")]
-    [SerializeField] private float playerHealth;
-    [SerializeField] private float regenSpeed;
+    [SerializeField] private float playerMaxHealth = 100;
+    [SerializeField] private float regenSpeed = 2;
+    [SerializeField] private float timeBeforeRegen = 3;
+    private Coroutine RegenHealth;
+    public float PlayerCurrentHealth { get; set; }
 
     [Header("Walk")]
     [SerializeField] private Transform playerBody;
-    [SerializeField] private float playerSpeed = 6f;
+    [SerializeField] private float playerDefaultSpeed = 6f;
     [SerializeField] private float playerTurnSpeed = 500f;
+    public float PlayerSpeed { get; set; }
+
 
     [Header("Jump")]
     [SerializeField] public float jumpHeight = 1f;
@@ -41,6 +46,9 @@ public class PlayerController : MonoBehaviour
         controls = playerActions.Controls;
 
         weaponController = GetComponentInChildren<WeaponController>();
+
+        PlayerCurrentHealth = playerMaxHealth;
+        PlayerSpeed = playerDefaultSpeed;
 
         controls.Attack.performed += _ => Attack();
         controls.Jump.performed += _ => Jump();
@@ -109,7 +117,7 @@ public class PlayerController : MonoBehaviour
 
         velocity.y += gravity * Time.deltaTime;
 
-        Vector3 move = skewedInput * playerInput.normalized.magnitude * playerSpeed;
+        Vector3 move = skewedInput * playerInput.normalized.magnitude * PlayerSpeed;
 
         characterController.Move((move + velocity) * Time.deltaTime);
     }
@@ -129,8 +137,49 @@ public class PlayerController : MonoBehaviour
     {
         weaponController.SwordSwing();
     }
-    #endregion
 
+    private void TakeDamage(float damage)
+    {
+        PlayerCurrentHealth -= damage;
+
+        if(PlayerCurrentHealth < 0)
+        {
+            KillPlayer();
+        }
+        else if(RegenHealth == null)
+        {
+            StopCoroutine(RegenHealth);
+        }
+
+        RegenHealth = StartCoroutine(RegenerateHealth());
+    }
+
+    private IEnumerator RegenerateHealth()
+    {
+        yield return new WaitForSeconds(timeBeforeRegen);
+        WaitForSeconds healthTick = new WaitForSeconds(regenSpeed);
+
+        while(PlayerCurrentHealth < playerMaxHealth)
+        {
+            PlayerCurrentHealth += 1;
+
+            if(PlayerCurrentHealth > playerMaxHealth)
+            {
+                PlayerCurrentHealth = playerMaxHealth;
+            }
+
+            yield return healthTick;
+        }
+
+        RegenHealth = null;
+    }
+
+    private void KillPlayer()
+    {
+        PlayerCurrentHealth = 0;
+    }
+    #endregion
+    
     void OnEnable()
     {
         playerActions.Enable();
