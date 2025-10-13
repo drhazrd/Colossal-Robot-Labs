@@ -16,9 +16,10 @@ public class CarDriverAI : MonoBehaviour {
     [SerializeField] private int maxLoops = 3;
     private int currentTargetIndex = 0;
 
-    private void Awake()
+    void OnEnable()
     {
         carDriver = GetComponent<CarDriver>();
+        RaceManager.manager.RegisterRacer(this);
     }
 
     private void Update() {
@@ -36,7 +37,6 @@ public class CarDriverAI : MonoBehaviour {
         float forwardAmount = 0f;
         float turnAmount = 0f;
 
-        float reachedTargetDistance = 15f;
         float distanceToTarget = Vector3.Distance(transform.position, targetPosition);
         if (distanceToTarget > reachedTargetDistance) {
             // Still too far, keep going
@@ -111,5 +111,7 @@ public class CarDriverAI : MonoBehaviour {
             Gizmos.DrawSphere(t.position, 1f);
         }
     }
-
+    void OnDestroy(){
+        RaceManager.manager.UnRegisterRacer(this);
+    }
 }

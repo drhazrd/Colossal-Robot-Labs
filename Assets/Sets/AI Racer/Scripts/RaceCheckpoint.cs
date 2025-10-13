@@ -14,8 +14,9 @@ public class RaceCheckpoint : MonoBehaviour
 
     void Start()
     {
-        mat = GetComponent<Renderer>();
+        mat = GetComponentInChildren<Renderer>();
         mat.material = idleMaterial;
+        ActiveStatus(true);
     }
 
     IEnumerator UpdateStatus(CarDriverAI leader)
@@ -23,14 +24,17 @@ public class RaceCheckpoint : MonoBehaviour
         RaceManager.manager.NewTurn(leader);
         yield return new WaitForSeconds(.5f);
         mat.material = idleMaterial;
-
     }
     void OnTriggerEnter(Collider col)
     {
-        if (col.TryGetComponent<CarDriverAI>(out CarDriverAI driver))
-        {
+        if (col.TryGetComponent<CarDriverAI>(out CarDriverAI driver) && pointActive)
+        {        
+            ActiveStatus(false);
             mat.material = activeMaterial;
             StartCoroutine(UpdateStatus(driver));
         }
+    }
+    public void ActiveStatus(bool status){
+        pointActive = status;
     }
 }
