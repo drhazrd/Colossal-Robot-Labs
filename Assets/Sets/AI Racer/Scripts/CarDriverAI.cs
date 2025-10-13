@@ -7,11 +7,13 @@ public class CarDriverAI : MonoBehaviour {
 
     [SerializeField] private Transform targetPositionTranform;
     List<Transform> path = new List<Transform>();
+    public float reachedTargetDistance = 5f;
     public List<Transform> targetTransforms = new List<Transform>();
 
     private CarDriver carDriver;
     private Vector3 targetPosition;
-    private int currentLoops = 3;
+    private int currentLoops;
+    [SerializeField] private int maxLoops = 3;
     private int currentTargetIndex = 0;
 
     private void Awake()
@@ -22,8 +24,14 @@ public class CarDriverAI : MonoBehaviour {
     private void Update() {
         if (targetTransforms.Count > 0)
         {
-            FollowTartgets(targetTransforms);
+            FollowTargets(targetTransforms);
         }else if(targetPositionTranform) SetTargetPosition(targetPositionTranform.position);
+
+        if (currentLoops >= maxLoops)
+        {
+            carDriver.SetInputs(0, 0);
+            return;
+        }
 
         float forwardAmount = 0f;
         float turnAmount = 0f;
@@ -76,14 +84,13 @@ public class CarDriverAI : MonoBehaviour {
         carDriver.SetInputs(forwardAmount, turnAmount);
     }
 
-    private void FollowTartgets(List<Transform> targets)
+    private void FollowTargets(List<Transform> targets)
     {
         if (targets.Count == 0) return;
 
         targetPosition = targets[currentTargetIndex].position;
 
         float distanceToTarget = Vector3.Distance(transform.position, targetPosition);
-        float reachedTargetDistance = 15f;
 
         if (distanceToTarget < reachedTargetDistance)
         {
