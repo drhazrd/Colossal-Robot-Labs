@@ -16,8 +16,9 @@ public class PlayerController : MonoBehaviour
     [Header("Walk")]
     [SerializeField] private Transform playerBody;
     [SerializeField] private float playerDefaultSpeed = 6f;
-    [SerializeField] private float playerTurnSpeed = 500f;
+    [SerializeField] private float playerDefaultTurnSpeed = 1000f;
     public float PlayerSpeed { get; set; }
+    public float PlayerTurnSpeed { get; set; }
 
 
     [Header("Jump")]
@@ -34,6 +35,8 @@ public class PlayerController : MonoBehaviour
 
     private WeaponController weaponController;
 
+    public Animator charAnimator { get; set; }
+
 
     private Vector3 playerInput;
     private Vector3 skewedInput;
@@ -47,8 +50,11 @@ public class PlayerController : MonoBehaviour
 
         weaponController = GetComponentInChildren<WeaponController>();
 
+        charAnimator = GetComponent<Animator>();
+
         PlayerCurrentHealth = playerMaxHealth;
         PlayerSpeed = playerDefaultSpeed;
+        PlayerTurnSpeed = playerDefaultTurnSpeed;
 
         controls.Attack.performed += _ => Attack();
         controls.Jump.performed += _ => Jump();
@@ -103,11 +109,20 @@ public class PlayerController : MonoBehaviour
 
             var rot = Quaternion.LookRotation(skewedInput, Vector3.up);
             
-            transform.rotation = Quaternion.RotateTowards(transform.rotation, rot, playerTurnSpeed * Time.deltaTime);
+            transform.rotation = Quaternion.RotateTowards(transform.rotation, rot, PlayerTurnSpeed * Time.deltaTime);
         }
     }
     private void MovePlayer()
     {
+        if (playerInput != Vector3.zero && weaponController.IsAttacking == false)
+        {
+            charAnimator.SetBool("isMoving", true);
+        }
+        else
+        {
+            charAnimator.SetBool("isMoving", false);
+        }
+
         isGrounded = characterController.isGrounded;
 
         if (characterController.isGrounded && velocity.y < 0)

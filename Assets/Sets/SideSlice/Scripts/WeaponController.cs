@@ -1,65 +1,71 @@
-using System.Collections;
-using System.Collections.Generic;
-using System.Text;
+using System;
 using UnityEngine;
 
 public class WeaponController : MonoBehaviour
 {
     [Header("Attack")]
     [SerializeField] private float playerAttack;
-    [SerializeField] private float attackCooldown = .3f;
+    [SerializeField] private float comboDelay = .5f;
 
-    private float timer;
-    private int numAttackSwing = 0;
+    [SerializeField] private Animator animator;
+    [SerializeField] private GameObject sword;
 
-    private int attackAnims = 3;
-
-    private PlayerController playerController;
     private Collider swordHB;
-    private Animator animator;
+    private PlayerController playerController;
 
-    private float currentSpeed;
+    private int numAttackSwing = 0;
+    private float lastSwingTime = 0f;
+    private bool bufferedInput = false;
 
-    public GameObject sword;
     public bool canAttack = true;
-    public bool isAttacking = false;
+    public bool IsAttacking { get; set; }
 
     private void Awake()
     {
-        animator = sword.GetComponent<Animator>();
         swordHB = sword.GetComponent<Collider>();
-        playerController = transform.parent.GetComponent<PlayerController>();
-
-
-        currentSpeed = playerController.PlayerSpeed;
-        timer = attackCooldown;
+        playerController = transform.root.GetComponent<PlayerController>();
+        IsAttacking = false;
     }
 
     private void Update()
     {
-        timer += Time.deltaTime;
+        if (IsAttacking && Time.time - lastSwingTime > comboDelay)
+        {
+            ResetCombo();
+        }
+        if (bufferedInput && !IsAttacking)
+        {
+            Debug.Log("Combo buffer");
+            StartComboFromBuffer();
+        }
     }
 
     public void SwordSwing()
     {
-        if (timer >= attackCooldown && canAttack == true)
+        if (!canAttack)
         {
-            SwingAttack();
-            timer = 0;
-
-            StartCoroutine(ResetAttackCooldown());
+            return;
         }
 
+        lastSwingTime = Time.time;
+
+        if (!IsAttacking)
+        {
+            numAttackSwing = 1;
+            SwingAttack(numAttackSwing);
+        }
+        else
+        {
+            bufferedInput = true;
+        }
     }
 
-    private void SwingAttack()
+    private void SwingAttack(int attackNumber)
     {
-        numAttackSwing = (numAttackSwing % attackAnims) + 1;
-        isAttacking = true;
+        IsAttacking = true;
+        swordHB.enabled = true;
 
-        playerController.PlayerSpeed *= 0.5f;
-
-        switch (numAttackSwing)
+        switch (attackNumber)
         {
             case 1:
                 animator.SetTrigger("Attack");
@@ -70,22 +76,70 @@ public class WeaponController : MonoBehaviour
             case 3:
                 animator.SetTrigger("Attack3");
                 break;
-            default:
-                break;
         }
-        swordHB.enabled = true;
     }
 
-    IEnumerator ResetAttackCooldown()
+    private void StartComboFromBuffer()
     {
-        StartCoroutine(ResetAttackBool());
-        yield return new WaitForSeconds(attackCooldown);
-        playerController.PlayerSpeed = currentSpeed;
+        if (numAttackSwing == 0)
+        {
+            numAttackSwing = 1;
+        }
+        else
+        {
+            numAttackSwing = Mathf.Clamp(numAttackSwing + 1, 1, 3);
+        }
+
+        bufferedInput = false;
+
+        Debug.Log(numAttackSwing);
+
+        SwingAttack(numAttackSwing);
     }
 
-    IEnumerator ResetAttackBool()
+    public void OnAttackAnimationEnd()
     {
-        yield return new WaitForSeconds(attackCooldown);
-        isAttacking = false;
+        swordHB.enabled = false;
+
+        if (bufferedInput && numAttackSwing < 3)
+        {
+            bufferedInput = false;
+            numAttackSwing++;
+            lastSwingTime = Time.time;
+            SwingAttack(numAttackSwing);
+        }
+        else
+        {
+            ResetCombo();
+        }
+    }
+
+    private void ResetCombo()
+    {
+        Debug.Log("Combo Reset");
+        numAttackSwing = 0;
+        bufferedInput = false;
+        IsAttacking = false;
+        RestoreSpeed();
+    }
+
+    public void SlowPlayer()
+    {
+        animator.SetBool("isMoving", false);
+        playerController.PlayerSpeed = 0f;
+        playerController.PlayerTurnSpeed = 0f;
+    }
+
+    public void RestoreSpeed()
+    {
+        playerController.PlayerSpeed = 6f;
+        playerController.PlayerTurnSpeed = 1000f;
+        EndAttack();
+    }
+
+    public void EndAttack()
+    {
+        IsAttacking = false;
+        swordHB.enabled = false;
     }
 }

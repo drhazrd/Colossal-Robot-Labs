@@ -6,20 +6,22 @@ public class CollisionDetection : MonoBehaviour
 {
     public WeaponController wController;
     public GameObject hitParticle;
+    private CameraShake cameraShake;
 
     void Start()
     {
-        
+        cameraShake = Camera.main.GetComponent<CameraShake>();
     }
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.tag == "Enemy" && wController.isAttacking == true)
+        if (other.tag == "Enemy" && wController.IsAttacking == true)
         {
             Debug.Log(other.name);
 
             other.GetComponent<EnemyHealth>().TakeDamage();
 
+            cameraShake.LightScreenShake();
             //Instantiate(hitParticle, other.transform);
 
             GetComponent<Collider>().enabled = false;
