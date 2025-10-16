@@ -27,13 +27,12 @@ public class CameraShake : MonoBehaviour
 
     IEnumerator ShakeEffect()
     {
-        Debug.Log("Shaking");
         Vector3 startPos = transform.position;
         float elapsedTime = 0f;
 
         while(elapsedTime < duration)
         {
-            elapsedTime += Time.time;
+            elapsedTime += Time.deltaTime;
             float strength = animCurve.Evaluate(elapsedTime / duration);
             transform.position = startPos + Random.insideUnitSphere * strength;
             yield return null;

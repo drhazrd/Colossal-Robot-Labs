@@ -33,11 +33,6 @@ public class WeaponController : MonoBehaviour
         {
             ResetCombo();
         }
-        if (bufferedInput && !IsAttacking)
-        {
-            Debug.Log("Combo buffer");
-            StartComboFromBuffer();
-        }
     }
 
     public void SwordSwing()
@@ -79,24 +74,6 @@ public class WeaponController : MonoBehaviour
         }
     }
 
-    private void StartComboFromBuffer()
-    {
-        if (numAttackSwing == 0)
-        {
-            numAttackSwing = 1;
-        }
-        else
-        {
-            numAttackSwing = Mathf.Clamp(numAttackSwing + 1, 1, 3);
-        }
-
-        bufferedInput = false;
-
-        Debug.Log(numAttackSwing);
-
-        SwingAttack(numAttackSwing);
-    }
-
     public void OnAttackAnimationEnd()
     {
         swordHB.enabled = false;
@@ -116,7 +93,6 @@ public class WeaponController : MonoBehaviour
 
     private void ResetCombo()
     {
-        Debug.Log("Combo Reset");
         numAttackSwing = 0;
         bufferedInput = false;
         IsAttacking = false;

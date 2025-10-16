@@ -1,16 +1,19 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor.Rendering.LookDev;
 using UnityEngine;
 
 public class CollisionDetection : MonoBehaviour
 {
-    public WeaponController wController;
     public GameObject hitParticle;
+    public GameObject camPivot;
     private CameraShake cameraShake;
+    private WeaponController wController;
 
     void Start()
     {
-        cameraShake = Camera.main.GetComponent<CameraShake>();
+        cameraShake = camPivot.GetComponent<CameraShake>();
+        wController = transform.root.GetComponent<WeaponController>();
     }
 
     private void OnTriggerEnter(Collider other)
