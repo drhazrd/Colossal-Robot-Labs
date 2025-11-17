@@ -47,7 +47,7 @@ public class Player : MonoBehaviour
         float moveX = Input.GetAxisRaw("Horizontal");
         float moveY = Input.GetAxisRaw("Vertical");
         Vector2 movement = new Vector2(moveX, moveY).normalized * moveSpeed;
-        rb.velocity = movement;
+        rb.linearVelocity = movement;
         //graphics to face the movement direction
         if (movement.magnitude > 0.1f)
         {

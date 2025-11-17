@@ -86,7 +86,7 @@ public class CarDriver : MonoBehaviour {
 
         speed = Mathf.Clamp(speed, speedMin, speedMax);
 
-        carRigidbody.velocity = transform.forward * speed;
+        carRigidbody.linearVelocity = transform.forward * speed;
 
         if (speed < 0) {
             // Going backwards, invert wheels

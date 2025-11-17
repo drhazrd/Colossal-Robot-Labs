@@ -51,5 +51,5 @@
         "temp/": true,
         "Temp/": true
     },
-    "dotnet.defaultSolution": "Colossal-Robot-Labs.sln"
+    "dotnet.defaultSolution": "Colossal-Robot-Labs.slnx"
 }
